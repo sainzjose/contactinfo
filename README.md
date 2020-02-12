@@ -1,4 +1,4 @@
-# contactinfo (unfinished)
+# contactinfo 
 This is my attempt at applying linked list to real world scenerios
 
 Skills used: Linked List, Dynamic Allocation, Struct Application.
