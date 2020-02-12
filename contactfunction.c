@@ -38,19 +38,23 @@ Contact newContact() {
 
 	Contact info = {" "," "," "," "};
 
+	getchar(); // gets the \n the user enters so the next fgets can work
+
 	printf("Contact last name: ");
-	scanf("%s", &info.last_name);
+	fgets(info.last_name, 50, stdin);
 
 	printf("Contact phone: ");
-	scanf("%s", &info.phone);
+	fgets(info.phone, 12, stdin);
+	//scanf("%s", &info.phone);
 
 	printf("Contact email: ");
-	scanf("%s", &info.email);
+	fgets(info.email, 50, stdin);
+	//scanf("%s", &info.email);
 
 	printf("Contact title: ");
-	scanf("%s", &info.title);
+	fgets(info.title, 20, stdin);
+	//scanf("%s", &info.title);
 
-	system("pause");
 	system("clear");
 
 	return info;
@@ -107,14 +111,13 @@ Boolean deleteContact(Node **pList, Contact searchContact) {
 		free(current);
 		return TRUE;
 	}
-	while (current != NULL && strcmp(current->data.last_name, searchContact.last_name) != 0) {
-
+	while (!isEmpty(current) && strcmp(current->data.last_name, searchContact.last_name) != 0) {
 		prev = current;
 		current = current->pNext;
 	}
-	if (current == NULL) {
+	if (isEmpty(current)) {
 
-		puts("NAME WAS NO FOUND");
+		puts("NAME WAS NOT FOUND");
 		return FALSE;
 	}
 	else {
@@ -126,34 +129,110 @@ Boolean deleteContact(Node **pList, Contact searchContact) {
 }
 Boolean editContact(Node *pList, Contact searchContact) {
 
+	int option;
 
+	if(isEmpty(pList)) {
+
+		return FALSE;
+	}
+	while(!isEmpty(pList)) {
+
+		if(strcmp(searchContact.last_name, pList->data.last_name) == 0) {
+			
+			do {
+
+				printf("1) Contact last name: %s",pList->data.last_name);
+				printf("2) Contact phone: %s",pList->data.phone);
+				printf("3) Contact email: %s",pList->data.email);
+				printf("4) Contact title: %s",pList->data.title);
+				printf("5) Done editing\nEnter option: ");
+				scanf("%d", &option);
+				
+				switch(option) {
+
+					case 1: printf("Enter new contact name: ");
+						getchar();
+						fgets(pList->data.last_name, 50, stdin);
+						break;
+					case 2: printf("Enter new contact phone: ");
+						getchar();
+						fgets(pList->data.phone, 12, stdin);
+						break;
+					case 3: printf("Enter new contact email: ");
+						getchar();
+						fgets(pList->data.email, 50, stdin);
+						break;
+					case 4: printf("Enter new contact title: ");
+						getchar();
+						fgets(pList->data.title, 50, stdin);
+						break;
+				}
+				system("clear");
+
+			} while(option != 5);
+
+			return TRUE;
+		}
+		pList = pList->pNext;
+	}
+	puts("Contact not found");
+	return FALSE;
 }
 Boolean loadContacts(FILE *infile, Node **pList) {
 
+	Contact tempContact;
+	char newLine[2];
 
+	if(infile == NULL) {
 
+		return FALSE;
+	}
+	while(!feof(infile)) {
+
+		fgets(tempContact.last_name, 50, infile);
+		fgets(tempContact.phone, 12, infile);
+		fgets(tempContact.email, 50, infile);
+		fgets(tempContact.title, 20, infile);
+		fgets(newLine, 2, infile);
+		insertContactInOrder(pList, tempContact);
+	}
+	puts("Contacts have been loaded");
+	getchar();
+	getchar();
+	system("clear");
+	return TRUE;
 }
-Boolean storeContacts(FILE *infile, Node *pList) {
+Boolean storeContacts(FILE *outfile, Node *pList) {
 
+	if(outfile == NULL) {
 
+		return FALSE;
+	}
+	while(!isEmpty(pList)) {
 
+		fprintf(outfile, "%s%s%s%s\n", pList->data.last_name, pList->data.phone, pList->data.email, pList->data.title);
+		pList = pList->pNext;
+	}
+	puts("Contacts have been stored!");
+	getchar();
+	getchar();
+	system("clear");
+	return TRUE;
 }
-void printList(Node **pList) {
 
-	Node *current = *pList;
+void printList(Node* pList) {
 
-	if(isEmpty(current)) {
-
+	if(isEmpty(pList)) {
 		puts("LIST IS EMPTY NOTHING TO PRINT");
+		return;
 	}
-	else {
-		
-		while(current->pNext != NULL) {
+	while(!isEmpty(pList)) {
 
-			printf("Name: %s\nPhone: %s\nEmail: %s\nTitle: %s\n\n",
-				current->data.last_name, current->data.phone, current->data.email, current->data.title);
-
-			current = current->pNext;
-		}
+		printf("Name: %sPhone: %sEmail: %sTitle: %s\n", pList->data.last_name, pList->data.phone, pList->data.email, pList->data.title);
+		pList = pList->pNext;
 	}
+	getchar();
+	getchar();
+	system("clear");
+
 }
