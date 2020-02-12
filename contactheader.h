@@ -70,7 +70,7 @@ Boolean loadContacts(FILE *infile, Node **pList);
 // Description: Stores all Contact information from the list into the
 // given file
 // Returns: TRUE if all Contacts were stored; FALSE otherwise
-Boolean storeContacts(FILE *infile, Node *pList);
+Boolean storeContacts(FILE *outfile, Node *pList);
 // Description: Prints all contact information in the list
 // Returns: Nothing
-void printList(Node **pList);
+void printList(Node* pList);
